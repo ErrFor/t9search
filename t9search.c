@@ -67,6 +67,41 @@ int readLine(char str[], int size) {
     return -1;
 }
 
+int validName(const char str[]) {
+    if (str[0] == '\0')
+        return 0;
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (c < 32 || c > 126)
+            return 0;
+    }
+
+    return 1;
+}
+
+int validPhone(const char str[]) {
+    if (str[0] == '\0')
+        return 0;
+
+    int i = 0;
+
+    if (str[0] == '+') {
+        i = 1;
+
+        if (str[i] == '\0')
+            return 0;
+    }
+
+    for (; str[i] != '\0'; i++) {
+        if (str[i] < '0' || str[i] > '9')
+            return 0;
+    }
+
+    return 1;
+}
+
 int main(int argc, char *argv[]) {
     char name[102];
     char phone[102];
@@ -109,6 +144,11 @@ int main(int argc, char *argv[]) {
         int phoneStatus = readLine(phone, sizeof(phone));
 
         if (phoneStatus != 1) {
+            fprintf(stderr, "Invalid input\n");
+            return 1;
+        }
+
+        if (!validName(name) || !validPhone(phone)) {
             fprintf(stderr, "Invalid input\n");
             return 1;
         }
