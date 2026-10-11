@@ -53,13 +53,18 @@ int matches(const char text[], const char pattern[]) {
     return 0;
 }
 
-void removeNewline(char str[]) {
+int readLine(char str[], int size) {
+    if (fgets(str, size, stdin) == NULL)
+        return 0;
+
     for (int i = 0; str[i] != '\0'; i++) {
         if (str[i] == '\n') {
             str[i] = '\0';
-            return;
+            return 1;
         }
     }
+
+    return -1;
 }
 
 int main(int argc, char *argv[]) {
@@ -90,11 +95,23 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    while (fgets(name, sizeof(name), stdin) != NULL) {
-        fgets(phone, sizeof(phone), stdin);
+    while (1) {
+        int nameStatus = readLine(name, sizeof(name));
 
-        removeNewline(name);
-        removeNewline(phone);
+        if (nameStatus == 0)
+            break;
+
+        if (nameStatus == -1) {
+            fprintf(stderr, "Invalid input\n");
+            return 1;
+        }
+
+        int phoneStatus = readLine(phone, sizeof(phone));
+
+        if (phoneStatus != 1) {
+            fprintf(stderr, "Invalid input\n");
+            return 1;
+        }
 
         if (argc == 1) {
             fprintf(stdout, "%s, %s\n", name, phone);
