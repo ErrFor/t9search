@@ -34,7 +34,7 @@ char charToDigit(char c) {
     return '\0';
 }
 
-int matches(const char text[], const char pattern[]){
+int matches(const char text[], const char pattern[]) {
     for (int i = 0; text[i] != '\0'; i++) {
         int j = 0;
 
@@ -53,22 +53,62 @@ int matches(const char text[], const char pattern[]){
     return 0;
 }
 
+void removeNewline(char str[]) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == '\n') {
+            str[i] = '\0';
+            return;
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
-    char input[100];
     char name[102];
     char phone[102];
+    int found = 0;
 
-    fgets(name, sizeof(name), stdin);
-    fgets(phone, sizeof(phone), stdin);
-
-    if(argc == 1){
-
+    if (argc > 2) {
+        fprintf(stderr, "Invalid argument\n");
+        return 1;
     }
 
-    if(argc == 2){
-        
+    if (argc == 2) {
+        int length = 0;
+
+        while (argv[1][length] != '\0') {
+            if (argv[1][length] < '0' || argv[1][length] > '9') {
+                fprintf(stderr, "Invalid argument\n");
+                return 1;
+            }
+
+            length++;
+        }
+
+        if (length == 0 || length > 100) {
+            fprintf(stderr, "Invalid argument\n");
+            return 1;
+        }
     }
 
+    while (fgets(name, sizeof(name), stdin) != NULL) {
+        fgets(phone, sizeof(phone), stdin);
+
+        removeNewline(name);
+        removeNewline(phone);
+
+        if (argc == 1) {
+            fprintf(stdout, "%s, %s\n", name, phone);
+        }else {
+            if (matches(name, argv[1]) || matches(phone, argv[1])) {
+                fprintf(stdout, "%s, %s\n", name, phone);
+                found = 1;
+            }
+        }
+    }
+
+    if (argc == 2 && !found) {
+        fprintf(stdout, "Not found\n");
+    }
 
     return 0;
 }
